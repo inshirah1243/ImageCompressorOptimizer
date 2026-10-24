@@ -2,9 +2,8 @@ pipeline {
     agent any
 
     environment {
-        // Replace this placeholder with your Docker Hub username.
-        DOCKERHUB_USERNAME = 'DOCKERHUB_USERNAME'
-        IMAGE_NAME = 'image-compressor-optimizer'
+        DOCKERHUB_USERNAME = 'inshirah1243'
+        IMAGE_NAME = 'image-compressor'
     }
 
     stages {
@@ -19,8 +18,7 @@ pipeline {
         stage('Push Docker Image') {
             steps {
                 script {
-                    // Create this Jenkins Username/Password credential with ID: docker-hub-credentials
-                    docker.withRegistry('https://registry.hub.docker.com', 'docker-hub-credentials') {
+                    docker.withRegistry('https://registry-1.docker.io', 'dockerhub-credentials') {
                         dockerImage.push()
                         dockerImage.push('latest')
                     }
@@ -30,16 +28,12 @@ pipeline {
 
         stage('Deploy to Kubernetes') {
             steps {
-                // Create this Jenkins Secret file credential with ID: kubeconfig-file.
-                withCredentials([file(credentialsId: 'kubeconfig-file', variable: 'KUBECONFIG')]) {
-                    sh '''
-                        kubectl apply -f deployment.yaml
-                        kubectl apply -f service.yaml
-                        kubectl set image deployment/image-compressor-optimizer \\
-                          image-compressor-optimizer=${DOCKERHUB_USERNAME}/${IMAGE_NAME}:${BUILD_NUMBER}
-                        kubectl rollout status deployment/image-compressor-optimizer
-                    '''
-                }
+                bat '''
+                    kubectl apply -f deployment.yaml
+                    kubectl apply -f service.yaml
+                    kubectl set image deployment/image-compressor-optimizer image-compressor-optimizer=inshirah1243/image-compressor:%BUILD_NUMBER%
+                    kubectl rollout status deployment/image-compressor-optimizer
+                '''
             }
         }
     }
