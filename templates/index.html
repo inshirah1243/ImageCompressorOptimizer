@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Image Compressor & Optimizer</title>
+  <style>
+    :root { color-scheme: light; font-family: Arial, sans-serif; }
+    body { background: #f4f7fb; color: #1f2937; margin: 0; }
+    main { max-width: 650px; margin: 48px auto; padding: 0 20px; }
+    .card { background: #fff; border-radius: 12px; box-shadow: 0 4px 18px #d8e1ee; padding: 28px; }
+    h1 { margin-top: 0; color: #1d4ed8; }
+    label { display: block; font-weight: bold; margin: 18px 0 7px; }
+    input[type="file"], input[type="number"] { box-sizing: border-box; width: 100%; padding: 10px; }
+    button, .download { background: #2563eb; border: 0; border-radius: 6px; color: white; cursor: pointer; display: inline-block; font-size: 16px; margin-top: 22px; padding: 11px 18px; text-decoration: none; }
+    button:hover, .download:hover { background: #1d4ed8; }
+    .message { background: #fee2e2; border-radius: 6px; color: #991b1b; margin: 15px 0; padding: 10px; }
+    .result { background: #ecfdf5; border-radius: 8px; margin-top: 25px; padding: 18px; }
+    table { border-collapse: collapse; width: 100%; }
+    td { border-bottom: 1px solid #bbf7d0; padding: 9px 0; }
+    td:last-child { font-weight: bold; text-align: right; }
+    .hint { color: #4b5563; font-size: .9rem; }
+  </style>
+</head>
+<body>
+  <main>
+    <section class="card">
+      <h1>Image Compressor & Optimizer</h1>
+      <p>Upload a JPG, JPEG, or PNG image and download an optimized copy.</p>
+
+      {% with messages = get_flashed_messages() %}
+        {% if messages %}
+          {% for message in messages %}<p class="message">{{ message }}</p>{% endfor %}
+        {% endif %}
+      {% endwith %}
+
+      <form method="post" enctype="multipart/form-data">
+        <label for="image">Choose an image</label>
+        <input id="image" name="image" type="file" accept=".jpg,.jpeg,.png,image/jpeg,image/png" required>
+
+        <label for="quality">Quality (1-100)</label>
+        <input id="quality" name="quality" type="number" min="1" max="100" value="75" required>
+        <p class="hint">For JPEG, lower values usually make smaller files. PNG remains lossless.</p>
+
+        <button type="submit">Compress Image</button>
+      </form>
+
+      {% if result %}
+        <div class="result">
+          <h2>Compression complete</h2>
+          <table>
+            <tr><td>Original size</td><td>{{ '%.2f'|format(result.original_size / 1024) }} KB</td></tr>
+            <tr><td>Compressed size</td><td>{{ '%.2f'|format(result.compressed_size / 1024) }} KB</td></tr>
+            <tr><td>Size reduction</td><td>{{ '%.2f'|format(result.reduction) }}%</td></tr>
+          </table>
+          <a class="download" href="{{ result.download_url }}" download="{{ result.download_name }}">Download Compressed Image</a>
+        </div>
+      {% endif %}
+    </section>
+  </main>
+</body>
+</html>

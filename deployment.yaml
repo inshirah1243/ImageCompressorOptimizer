@@ -1,0 +1,25 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: image-compressor-optimizer
+  labels:
+    app: image-compressor-optimizer
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: image-compressor-optimizer
+  template:
+    metadata:
+      labels:
+        app: image-compressor-optimizer
+    spec:
+      containers:
+        - name: image-compressor-optimizer
+          # Replace DOCKERHUB_USERNAME before manually deploying this file.
+          image: DOCKERHUB_USERNAME/image-compressor-optimizer:latest
+          ports:
+            - containerPort: 5000
+          env:
+            - name: SECRET_KEY
+              value: change-this-to-a-long-random-secret
