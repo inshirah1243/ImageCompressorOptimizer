@@ -1,3 +1,4 @@
+
 pipeline {
     agent any
 
@@ -31,8 +32,8 @@ pipeline {
                 bat '''
                     kubectl apply -f deployment.yaml
                     kubectl apply -f service.yaml
-                    kubectl set image deployment/image-compressor-optimizer image-compressor-optimizer=inshirah1243/image-compressor:%BUILD_NUMBER%
-                    kubectl rollout status deployment/image-compressor-optimizer
+                    kubectl set image deployment/image-compressor image-compressor=inshirah1243/image-compressor:%BUILD_NUMBER%
+                    kubectl rollout status deployment/image-compressor
                 '''
             }
         }
